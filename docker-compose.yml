@@ -1,0 +1,33 @@
+version: '3.4'
+
+networks:
+    backend:
+
+services:
+  db:
+    container_name: db-container
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=password@12345#
+    networks:
+        - backend
+    ports:
+      - 8003:1433
+  webapi:
+    container_name: api-container
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+    networks: 
+      - backend
+    ports:
+      - 8004:80 
+    environment:
+      - DB_HOST=localhost,8003
+      - DB_NAME=dbname
+      - BD_SA_PASSWORD=password@12345#
+     
+
+
